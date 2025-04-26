@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Games Released Per Year</title>
+  <link rel="stylesheet" href="styles/style.css">
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+<body>
+  <header>
+    <h1>Games Released Per Year</h1>
+  </header>
+  <main style="text-align: center;">
+    <section id="games-per-year-controls">
+      <label for="platform-select-2">Platform:</label>
+      <select id="platform-select-2">
+        <option value="All">All</option>
+      </select>
+
+      <label for="region-select-2">Region:</label>
+      <select id="region-select-2">
+        <option value="All">All</option>
+      </select>
+    </section>
+
+    <section id="games-per-year-chart">
+      <svg id="games-per-year-visualization" width="800" height="500"></svg>
+    </section>
+
+    <br>
+    <p>Blurb talking about data...</p>
+    <br>
+    <button onclick="location.href='index.html'">Back to Home</button>
+
+
+    <footer>
+      <p>© 2025 Caden Schoonveld. All rights reserved.</p>
+      <p>Data Source: <a href="https://www.kaggle.com/datasets/zahidmughal2343/video-games-sale?resource=download" target="_blank" style="color: blue;">Video Games Sale Dataset by Zahid Mughal on Kaggle</a></p></p>
+      <p>Website built for N328 Final Project at Indiana University</p>
+    </footer>
+  </main>
+  <script src="scripts/main.js"></script>
+</body>
+</html>

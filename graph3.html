@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sales Density by Region</title>
+  <link rel="stylesheet" href="styles/style.css">
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script src="https://d3js.org/topojson.v3.min.js"></script>
+</head>
+<body>
+  <header>
+    <h1>Sales Density by Region</h1>
+  </header>
+  <main style="text-align: center;">
+    <section id="controls">
+      <label for="platform-select">Platform:</label>
+      <select id="platform-select">
+        <option value="All">All</option>
+      </select>
+
+      <label for="genre-select">Genre:</label>
+      <select id="genre-select">
+        <option value="All">All</option>
+      </select>
+    </section>
+
+    <section id="chart">
+      <svg id="world-map" width="960" height="500"></svg>
+    </section>
+
+    <div id="legend-container" style="margin-top: 20px;"></div>
+    
+    <button onclick="location.href='index.html'">Back to Home</button>
+
+
+    <footer>
+        <p>© 2025 Caden Schoonveld. All rights reserved.</p>
+        <p>Data Source: <a href="https://www.kaggle.com/datasets/zahidmughal2343/video-games-sale?resource=download" target="_blank" style="color: blue;">Video Games Sale Dataset by Zahid Mughal on Kaggle</a></p></p>
+        <p>Website built for N328 Final Project at Indiana University</p>
+    </footer>
+  </main>
+  <script src="scripts/main.js"></script>
+</body>
+</html>
