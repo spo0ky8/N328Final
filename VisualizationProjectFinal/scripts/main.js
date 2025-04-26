@@ -136,7 +136,7 @@ d3.csv("scripts/data/video-games-sales.csv").then(data => {
       .attr("y", margin.top / 2)
       .attr("text-anchor", "middle")
       .style("font-weight", "bold")
-      .text(`Top 20 Games`);
+      .text(`Top 25 Games (millions)`);
   
     const top20 = filteredData
       .filter(d => d[selectedRegion] > 0)
@@ -350,7 +350,7 @@ d3.csv("scripts/data/video-games-sales.csv").then(data => {
         .attr("class", "bubble")
         .attr("cx", d => projection(d.coords)[0])
         .attr("cy", d => projection(d.coords)[1])
-        .attr("r", d => radiusScale(d.totalSales)) 
+        .attr("r", d => radiusScale(d.totalSales) * 1.5) 
         .attr("fill", "steelblue")
         .attr("opacity", 0.5)
         .attr("stroke", "#333")
