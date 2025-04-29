@@ -32,6 +32,14 @@
     <!-- Controls -->
     <div id="controls-container">
       <section id="main-controls">
+        <div id="year-filters">
+          <h4>Year:</h4>
+          <input type="checkbox" id="all-years" checked>
+          <label for="all-years">All</label>
+          <br>
+          <input type="range" id="year-slider" min="1980" max="2020" step="1" value="2020" disabled>
+          <span id="year-value">2020</span>
+        </div>
         <div id="platform-filters">
           <h4>Platform:</h4>
           <div id="platform-options"></div>
@@ -43,6 +51,10 @@
         <div id="region-filters">
           <h4>Region:</h4>
           <div id="region-options"></div>
+        </div>
+        <div id="publisher-filters">
+          <h4>Publisher:</h4>
+          <div id="publisher-options"></div>
         </div>
       </section>
     </div>

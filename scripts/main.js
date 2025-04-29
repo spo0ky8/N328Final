@@ -17,6 +17,40 @@ d3.csv("scripts/data/video-games-sales.csv").then(data => {
     "PS", "PS2", "PS3", "PS5", "PSP", "PSV", "SAT", "SNES", "Wii", "WiiU",
     "X360", "XB", "XOne"
   ];
+
+  // Refine publisher list
+  const validPublishers = [
+    { name: "Activision", aliases: ["Activision", "Activision Blizzard"] },
+    { name: "Atari", aliases: ["Atari"] },
+    { name: "Bethesda Softworks", aliases: ["Bethesda Softworks"] },
+    { name: "Capcom", aliases: ["Capcom"] },
+    { name: "Disney Interactive Studios", aliases: ["Disney Interactive Studios"] },
+    { name: "Electronic Arts", aliases: ["EA Games", "Electronic Arts"] },
+    { name: "From Software", aliases: ["From Software"] },
+    { name: "Hasbro Interactive", aliases: ["Hasbro Interactive"] },
+    { name: "LucasArts", aliases: ["LucasArts"] },
+    { name: "Microsoft Game Studios", aliases: ["Microsoft Game Studios"] },
+    { name: "Namco Bandai Games", aliases: ["Namco Bandai Games"] },
+    { name: "Nintendo", aliases: ["Nintendo"] },
+    { name: "Paradox Interactive", aliases: ["Paradox Development", "Paradox Interactive"] },
+    { name: "Sega", aliases: ["Sega"] },
+    { name: "Sony", aliases: [
+        "Sony Computer Entertainment",
+        "Sony Computer Entertainment America",
+        "Sony Computer Entertainment Europe",
+        "Sony Online Entertainment"
+      ] },
+    { name: "Square Enix", aliases: [
+        "Square",
+        "Square EA",
+        "Square Enix",
+        "SquareSoft"
+      ] },
+    { name: "Take-Two Interactive", aliases: ["Take-Two Interactive"] },
+    { name: "Ubisoft", aliases: ["Ubisoft", "Ubisaoft Annecy"] },
+    { name: "Valve", aliases: ["Valve", "Valve Software"] },
+    { name: "WB Interactive", aliases: ["Warner Bros. Interactive Entertainment"] }
+  ];
   
   // Rename for ease of use
   const platformNames = {
@@ -57,10 +91,39 @@ d3.csv("scripts/data/video-games-sales.csv").then(data => {
     { value: "JP_Sales", text: "Japan" },
     { value: "Other_Sales", text: "Other" }
   ];
+  const publishers = ["All", ...validPublishers.sort()];
+  const years = ["All", ...Array.from(new Set(validData.map(d => d.Year))).sort()];
 
   const platformContainer = d3.select("#platform-options");
   const genreContainer = d3.select("#genre-options");
   const regionContainer = d3.select("#region-options");
+  const publisherContainer = d3.select("#publisher-options");
+  
+  // Add the publisher aliases together
+  data.forEach(d => {
+    const publisherGroup = validPublishers.find(group =>
+      group.aliases.includes(d.Publisher)
+    );
+    d.Publisher = publisherGroup ? publisherGroup.name : d.Publisher;
+  });
+
+  const yearContainer = d3.select("#year-options");
+  const yearSlider = d3.select("#year-slider");
+  const allYearsCheckbox = d3.select("#all-years");
+  const yearValueDisplay = d3.select("#year-value");
+
+  // Year checkbox and slider 
+  allYearsCheckbox.on("change", function () {
+    const isChecked = d3.select(this).property("checked");
+    yearSlider.property("disabled", isChecked);
+    filterData();
+  });
+  
+  yearSlider.on("input", function () {
+    const selectedYear = d3.select(this).property("value");
+    yearValueDisplay.text(selectedYear);
+    filterData();
+  });
 
   function createRadioButtons(container, options, groupName) {
     options.forEach(option => {
@@ -75,32 +138,66 @@ d3.csv("scripts/data/video-games-sales.csv").then(data => {
     });
   }
 
+  function publisherCreateRadioButtons(container, options, groupName) {
+    options.forEach(option => {
+      const label = container.append("label");
+      label.append("input")
+        .attr("type", "radio")
+        .attr("name", groupName)
+        .attr("value", option.name || option) // Use `name` if it's an object, otherwise use the string
+        .property("checked", option === "All" || option.value === "Global_Sales");
+      label.append("span").text(option.name || option); // Use `name` for display text
+      label.append("br");
+    });
+  }
+
   // radio selects
   createRadioButtons(platformContainer, platforms, "platform");
   createRadioButtons(genreContainer, genres, "genre");
   createRadioButtons(regionContainer, regionOptions, "region");
+  publisherCreateRadioButtons(publisherContainer, publishers, "publisher");
+  createRadioButtons(yearContainer, years, "year");
 
   // filter based on selections
   function filterData() {
     const selectedPlatform = d3.select('input[name="platform"]:checked').property("value");
     const selectedGenre = d3.select('input[name="genre"]:checked').property("value");
     const selectedRegion = d3.select('input[name="region"]:checked').property("value");
-
+    const selectedPublisher = d3.select('input[name="publisher"]:checked').property("value");
+    const isAllYears = allYearsCheckbox.property("checked");
+    const selectedYear = yearSlider.property("value");
+  
     let filtered = validData;
-
+  
     if (selectedPlatform !== "All") {
       filtered = filtered.filter(d => d.Platform === selectedPlatform);
     }
     if (selectedGenre !== "All") {
       filtered = filtered.filter(d => d.Genre === selectedGenre);
     }
-
+    if (selectedPublisher !== "All") {
+      filtered = filtered.filter(d => d.Publisher === selectedPublisher);
+    }
+    if (!isAllYears) {
+      filtered = filtered.filter(d => d.Year === selectedYear);
+    }
+  
+    // Update bar and bubble charts with year filter
     topGames(filtered, selectedRegion);
-    perYear(filtered, selectedRegion);
     mapBubbles(filtered);
+  
+    // Update line chart without year filter
+    const lineChartData = validData.filter(d => {
+      return (
+        (selectedPlatform === "All" || d.Platform === selectedPlatform) &&
+        (selectedGenre === "All" || d.Genre === selectedGenre) &&
+        (selectedPublisher === "All" || d.Publisher === selectedPublisher)
+      );
+    });
+    perYear(lineChartData, selectedRegion);
   }
 
-  d3.selectAll('input[name="platform"], input[name="genre"], input[name="region"]').on("change", filterData);
+  d3.selectAll('input[name="platform"], input[name="genre"], input[name="region"], input[name="publisher"], input[name="year"]').on("change", filterData);
 
   filterData();
 
